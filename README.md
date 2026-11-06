@@ -1,198 +1,292 @@
-# 4SF25CI106_3B
+# NumPy and Pandas Assignment
 
-This project analyzes a Spotify artist dataset with Python and Pandas. The
-notebook demonstrates dataset loading, data understanding, conditional data
-transformation, missing-value handling with mean imputation, and grouped
-insight generation.
+This project contains a Jupyter Notebook with practical NumPy and Pandas
+examples. The notebook builds small reproducible DataFrames and demonstrates
+calculation, aggregation, missing-value handling, grouping, merging,
+hierarchical indexes, row/column transformations, and string operations.
 
-## Project files
-
-The analysis files are located under:
+## Project file
 
 ```text
 project.ipynb/
 └── projectt1.ipynb/
-    └── cie/
-        ├── cie.ipynb
-        └── Spotify.csv
+    └── projectpandasnumpy.ipynb
 ```
 
-- `cie.ipynb` is the executable analysis notebook.
-- `Spotify.csv` is the input dataset used by the notebook.
+- `projectpandasnumpy.ipynb` contains the complete assignment.
+- The notebook uses generated data, so no external CSV or database is
+  required.
 
 ## Requirements
 
-- Python 3.10 or newer
+- Python 3.10 or later
 - Jupyter Notebook, JupyterLab, or Visual Studio Code with the Jupyter
   extension
-- Pandas
 - NumPy
+- Pandas
 
-Install the Python dependencies in a virtual environment:
+## Setup
+
+Create a virtual environment from the repository root:
 
 ```bash
 python -m venv .venv
 ```
 
-Activate the environment:
-
-Windows PowerShell:
+Activate it on Windows PowerShell:
 
 ```powershell
 .venv\Scripts\Activate.ps1
 ```
 
-Windows Command Prompt:
+Activate it on Windows Command Prompt:
 
 ```bat
 .venv\Scripts\activate.bat
 ```
 
-macOS/Linux:
+Activate it on macOS or Linux:
 
 ```bash
 source .venv/bin/activate
 ```
 
-Install the required packages:
+Install the dependencies:
 
 ```bash
 python -m pip install --upgrade pip
-python -m pip install pandas numpy jupyter
+python -m pip install numpy pandas jupyter
 ```
 
-## Running the notebook
+## Run the notebook
 
-The notebook reads `Spotify.csv` with a relative path:
-
-```python
-spotify_df = pd.read_csv("Spotify.csv")
-```
-
-Therefore, open or run the notebook with
-`project.ipynb/projectt1.ipynb/cie` as the working directory. In a terminal:
+From the repository root, start Jupyter:
 
 ```bash
-cd project.ipynb/projectt1.ipynb/cie
-jupyter notebook cie.ipynb
+jupyter notebook
 ```
 
-In Visual Studio Code, open the repository folder, open
-`project.ipynb/projectt1.ipynb/cie/cie.ipynb`, select the Python environment
-containing Pandas and NumPy, and run the cells from top to bottom.
+Open:
+
+```text
+project.ipynb/projectt1.ipynb/projectpandasnumpy.ipynb
+```
+
+Alternatively, open the repository in Visual Studio Code, select the virtual
+environment as the notebook kernel, and run the cells from top to bottom.
+
+All random examples use fixed NumPy seeds, so the generated values and
+displayed results are reproducible.
 
 ## Notebook walkthrough
 
-### Initial setup and Task 1: Dataset selection
+### Imports
 
-The notebook imports Pandas and NumPy, then loads `Spotify.csv` into the
-`spotify_df` DataFrame. It prints the dataset shape and displays the first five
-rows so that the input can be checked before analysis.
-
-The dataset contains 37,000 artist records and these columns:
-
-| Column | Description |
-| --- | --- |
-| `ids` | Spotify artist identifier |
-| `names` | Artist name |
-| `popularity` | Artist popularity score |
-| `followers` | Number of followers |
-| `genres` | Artist genre |
-| `first_release` | First release year |
-| `last_release` | Most recent release year |
-| `num_releases` | Number of releases |
-| `num_tracks` | Number of tracks |
-| `monthly_listeners` | Monthly listener count |
-
-### Task 2: Data understanding
-
-The notebook uses:
-
-- `spotify_df.describe()` for statistical summaries of numeric columns.
-- `spotify_df.info()` for row counts, data types, and memory usage.
-- `spotify_df.isnull().sum()` to identify missing values in each column.
-
-The `genres` field contains missing values, and `monthly_listeners` has a
-small number of missing numeric values.
-
-### Task 3: Data transformation
-
-The transformation cell checks whether optional columns named `explicit` and
-`energy` exist before using them:
-
-- If `explicit` exists, it creates an integer `is_explicit_flag` column.
-- If `energy` exists, it creates low, medium, and high energy categories using
-  quantile bins.
-- With the supplied artist dataset, those optional columns are not present, so
-  the notebook reports that the transformations were skipped instead of
-  raising a `KeyError`.
-
-The cell then displays a sample of the main identifying and performance
-columns.
-
-### Task 4: Null-value handling
-
-The notebook identifies numeric columns containing null values and fills each
-one with that column's mean:
+The first cell imports:
 
 ```python
-spotify_df[column] = spotify_df[column].fillna(spotify_df[column].mean())
+import numpy as np
+import pandas as pd
 ```
 
-It prints missing-value counts before and after imputation. Text columns such
-as `genres` are not mean-imputed because a numeric mean is not meaningful for
-them.
+NumPy is used to generate arrays and random values. Pandas is used to create
+and manipulate Series and DataFrames.
 
-### Task 5: Insight generation
+### Task 1: Create a calculated DataFrame column
 
-Task 5 uses the actual column names from `Spotify.csv`.
+The notebook creates a 5-row DataFrame with columns `A`, `B`, and `C`.
+`Product_AB` is then calculated by multiplying columns `A` and `B`:
 
-#### Genre-level analysis
+```python
+df1["Product_AB"] = df1["A"] * df1["B"]
+```
 
-Missing genres are labeled `Unknown`. The data is grouped by `genres`, and the
-notebook calculates:
+This demonstrates vectorized column arithmetic in Pandas.
 
-- Average popularity
-- Total followers
-- Total tracks
-- Total monthly listeners
+### Task 2: Column-wise and row-wise sums
 
-The resulting table is sorted by total followers in descending order.
+The notebook creates a DataFrame with columns `X`, `Y`, and `Z`, then
+calculates:
 
-#### Artist-level analysis
+- Column totals with `df2.sum(axis=0)`
+- Row totals with `df2.sum(axis=1)`
 
-The data is grouped by `names`, and the notebook calculates the same
-performance measures for each artist. The resulting table is sorted by total
-followers to show the highest-performing artists first.
+The `axis` argument controls whether the operation is performed vertically
+by column or horizontally by row.
 
-> The notebook intentionally uses `genres`, `names`, `popularity`, `followers`,
-> `num_tracks`, and `monthly_listeners`. Column names such as `genre`,
-> `artist_name`, `stream_count`, `popularity_score`, and `track_id` belong to a
-> different Spotify track-level schema and should not be used with this CSV.
+### Task 3: Mean imputation for missing values
+
+Two values are replaced with `NaN` in a numeric DataFrame. The notebook fills
+each missing value with the mean of its column:
+
+```python
+df3_imputed = df3.fillna(df3.mean())
+```
+
+This is a simple mean-imputation technique for numeric data.
+
+### Task 4: Remove rows containing null values
+
+Another DataFrame receives two missing values. The notebook removes every row
+containing at least one missing value:
+
+```python
+df4_cleaned = df4.dropna()
+```
+
+Unlike Task 3, this task discards incomplete rows instead of replacing their
+values.
+
+### Task 5: Grouped summary statistics
+
+The notebook creates category and value columns, then groups the data by
+`Category`. It calculates both the sum and mean of `Value`:
+
+```python
+grouped5 = df5.groupby("Category")["Value"].agg(["sum", "mean"])
+```
+
+The result provides category-level summary statistics.
+
+### Task 6: Total sales by category
+
+A product sales DataFrame is grouped by `Category`. The sales for each
+category are added and converted back to a regular DataFrame with
+`reset_index()`:
+
+```python
+total_sales = df6.groupby("Category")["Sales"].sum().reset_index()
+```
+
+### Task 7: Merge two DataFrames
+
+Two DataFrames contain related employee information. One contains employee
+names and the other contains departments. They are combined using the shared
+`Employee_ID` key:
+
+```python
+merged_df = pd.merge(df7_a, df7_b, on="Employee_ID")
+```
+
+This demonstrates an inner merge based on a common identifier.
+
+### Task 8: Create and slice a MultiIndex
+
+The notebook creates a two-level index containing class and student names.
+It then selects the records belonging to `Class_A`:
+
+```python
+df8.loc["Class_A"]
+```
+
+This demonstrates hierarchical indexing and label-based selection.
+
+### Task 9: Group data by MultiIndex levels
+
+The notebook creates a MultiIndex from category and subcategory combinations.
+It groups by both index levels and sums `Units_Sold`:
+
+```python
+sum_result = df9.groupby(
+    level=["Category", "SubCategory"]
+).sum()
+```
+
+This is useful for summarized data that is already organized by multiple
+index dimensions.
+
+### Task 10: Apply a function to every DataFrame value
+
+The notebook creates a numeric DataFrame and doubles every value using
+`DataFrame.apply()` with a lambda function:
+
+```python
+doubled_df = df10.apply(lambda val: val * 2)
+```
+
+This demonstrates applying an element-wise transformation to numeric data.
+
+### Task 11: Calculate a custom row total
+
+The notebook creates three numeric columns and calculates a `Row_Sum` column
+from the values in each row:
+
+```python
+df11["Row_Sum"] = df11.apply(
+    lambda row: row["Num1"] + row["Num2"] + row["Num3"],
+    axis=1
+)
+```
+
+Using `axis=1` passes each row to the function.
+
+### Task 12: Convert text to uppercase
+
+The notebook creates a Pandas Series of words and uses the string accessor to
+convert every value to uppercase:
+
+```python
+upper_series = text_series12.str.upper()
+```
+
+Pandas string accessors provide vectorized text operations without an
+explicit loop.
+
+### Task 13: Extract the first three characters
+
+The final task slices each string and keeps its first three characters:
+
+```python
+extracted_series = text_series13.str[:3]
+```
+
+This demonstrates vectorized substring extraction with the `.str` accessor.
+
+## Concepts demonstrated
+
+- NumPy random number generation with reproducible seeds
+- DataFrame and Series creation
+- Vectorized arithmetic
+- Row and column aggregation
+- Missing-value imputation with column means
+- Missing-row removal
+- `groupby()` and multiple aggregation functions
+- DataFrame merging
+- MultiIndex creation, slicing, and grouping
+- `apply()` and lambda functions
+- Vectorized string transformations
 
 ## Troubleshooting
 
-### `FileNotFoundError: Spotify.csv`
+### `ModuleNotFoundError: No module named 'numpy'`
 
-Run the notebook with `project.ipynb/projectt1.ipynb/cie` as the working
-directory, or change the loading code to use the correct relative path.
+Activate the virtual environment and install the dependencies:
 
-### `KeyError` for `genre` or `artist_name`
+```bash
+python -m pip install numpy pandas jupyter
+```
 
-Use the dataset's actual names: `genres` for genre and `names` for artist.
-Also use the numeric fields listed in the dataset schema above.
+### The notebook does not show the expected values
 
-### Missing `monthly_listeners` values after loading
+Run all cells from the beginning in order. The notebook defines variables in
+earlier cells, and each cell uses the DataFrames created before it.
 
-Run the Task 4 cell before Task 5. Task 4 fills missing numeric values using
-the mean of each affected column.
+### The notebook kernel is unavailable
 
-### Notebook cells show stale output
+Install Jupyter in the selected Python environment, then select that same
+environment as the notebook kernel:
 
-Restart the kernel, run the cells in order, and confirm that the selected
-Python interpreter has Pandas and NumPy installed.
+```bash
+python -m pip install jupyter
+```
+
+### Results differ after editing the notebook
+
+Do not remove or change the `np.random.seed(...)` calls if reproducible output
+is required. Each seed controls the generated values for its task.
 
 ## Reproducibility
 
-Run all cells from top to bottom in a fresh kernel. The analysis does not
-require network access or API credentials; it uses only the included CSV file.
+The notebook is self-contained and does not require network access, API keys,
+or external data files. Run it in a fresh kernel from top to bottom to
+reproduce the included examples and outputs.
